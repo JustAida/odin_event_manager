@@ -29,7 +29,8 @@ contents = CSV.open(
   header_converters: :symbol
 )
 
-template_letter = File.read("form_letter.html")
+template_letter = File.read("form_letter.erb")
+erb_template = ERB.new template_letter
 
 contents.each do |row|
   name = row[:first_name]
@@ -38,8 +39,6 @@ contents.each do |row|
 
   legislators = legislator_by_zipcode(zipcode)
 
-  personal_letter = template_letter.gsub("FIRST_NAME", name)
-  personal_letter.gsub!("LEGISLATORS", legislators)
-
-  puts personal_letter
+  form_letter = erb_template.result(binding)
+  puts form_letter
 end
